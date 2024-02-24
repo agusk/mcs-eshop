@@ -3,10 +3,13 @@
     <TargetFramework>net8.0</TargetFramework>
     <UserSecretsId>2964ec8e-0d48-4541-b305-94cab537f867</UserSecretsId>
     <PublishAot Condition="'$(EnableAotPublishing)' == 'true'">true</PublishAot>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Aspire.StackExchange.Redis" />
     <PackageReference Include="Grpc.AspNetCore" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
   </ItemGroup>
 
   <ItemGroup>
