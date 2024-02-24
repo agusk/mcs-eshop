@@ -6,12 +6,18 @@ builder.AddForwardedHeaders();
 
 var redis = builder.AddRedisContainer("redis");
 var rabbitMq = builder.AddRabbitMQContainer("eventbus");
-var postgres = builder.AddPostgresContainer("postgres")
+var postgres = builder.AddPostgresContainer("postgres",5432,"pass123")
     .WithAnnotation(new ContainerImageAnnotation
     {
         Image = "ankane/pgvector",
         Tag = "latest"
-    });
+    })    
+    .WithPgAdmin(5000,"pgadmin")
+    .WithEnvironment("PGADMIN_DEFAULT_EMAIL", "a@email.com")
+    .WithEnvironment("PGADMIN_DEFAULT_PASSWORD", "pass123")
+    .WithEnvironment("PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED", "True");
+
+
 
 var catalogDb = postgres.AddDatabase("catalogdb");
 var identityDb = postgres.AddDatabase("identitydb");
