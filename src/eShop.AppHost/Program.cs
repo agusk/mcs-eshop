@@ -12,6 +12,7 @@ var postgres = builder.AddPostgresContainer("postgres",5432,"pass123")
         Image = "ankane/pgvector",
         Tag = "latest"
     })    
+    .WithVolumeMount()
     .WithPgAdmin(5000,"pgadmin")
     .WithEnvironment("PGADMIN_DEFAULT_EMAIL", "a@email.com")
     .WithEnvironment("PGADMIN_DEFAULT_PASSWORD", "pass123")
