@@ -5,18 +5,31 @@ var builder = DistributedApplication.CreateBuilder(args);
 builder.AddForwardedHeaders();
 
 var redis = builder.AddRedisContainer("redis");
-var rabbitMq = builder.AddRabbitMQContainer("eventbus");
+var rabbitMq = builder.AddRabbitMQContainer("eventbus")
+    .WithAnnotation(new ContainerImageAnnotation
+    {
+        Image = "rabbitmq",
+        Tag = "3-management"
+    })    
+    .WithHttpEndpoint(containerPort: 15672, hostPort: 8080, name: "eventbus")
+    .WithVolumeMount("./rabbitmq", "/var/lib/rabbitmq/mnesia/");
+
+
 var postgres = builder.AddPostgresContainer("postgres",5432,"pass123")
     .WithAnnotation(new ContainerImageAnnotation
     {
         Image = "ankane/pgvector",
         Tag = "latest"
     })    
-    .WithVolumeMount()
-    .WithPgAdmin(5000,"pgadmin")
+    .WithVolumeMount("./postgres", "/var/lib/postgresql/data");
+    
+
+var pgAdmin = builder.AddContainer("pgadmin","dpage/pgadmin4","latest")
+    .WithHttpEndpoint(containerPort: 80, hostPort: 5000, name: "pgadmin")
+    .WithVolumeMount("./pgadmin", "/var/lib/pgadmin")
     .WithEnvironment("PGADMIN_DEFAULT_EMAIL", "a@email.com")
     .WithEnvironment("PGADMIN_DEFAULT_PASSWORD", "pass123")
-    .WithEnvironment("PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED", "True");
+    .ExcludeFromManifest();
 
 
 
