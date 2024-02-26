@@ -1,4 +1,7 @@
 ﻿using eShop.AppHost;
+using System.Net.Sockets;
+using Aspire.Hosting.ApplicationModel;
+using Aspire.Hosting.Utils;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -6,13 +9,24 @@ builder.AddForwardedHeaders();
 
 var redis = builder.AddRedisContainer("redis");
 var rabbitMq = builder.AddRabbitMQContainer("eventbus")
+    // .WithAnnotation(new EndpointAnnotation(ProtocolType.Tcp, port: 8080, containerPort: 15672)) 
     .WithAnnotation(new ContainerImageAnnotation
     {
         Image = "rabbitmq",
         Tag = "3-management"
-    })    
-    .WithHttpEndpoint(containerPort: 15672, hostPort: 8080, name: "eventbus")
+    })        
+    // .WithAnnotation(new EndpointAnnotation(
+    //     ProtocolType.Tcp, 
+    //     uriScheme: "http", 
+    //     name: "management", 
+    //     port: 8080, 
+    //     containerPort: 15672))
+    .WithEndpoint(containerPort: 15672, hostPort: 8080, name: "management", scheme: "http")
+    // .WithHttpEndpoint(containerPort: 15672, hostPort: 8080, name: "management")
+    .WithEnvironment("RABBITMQ_DEFAULT_USER", "guest")
+    .WithEnvironment("RABBITMQ_DEFAULT_PASS", "guest")
     .WithVolumeMount("./rabbitmq", "/var/lib/rabbitmq/mnesia/");
+    // .PublishAsContainer();
 
 
 var postgres = builder.AddPostgresContainer("postgres",5432,"pass123")
