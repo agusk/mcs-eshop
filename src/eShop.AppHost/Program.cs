@@ -9,39 +9,8 @@ builder.AddForwardedHeaders();
 
 var redis = builder.AddRedisContainer("redis");
 
-// var rabbitMq = builder.AddContainer("eventbus","rabbitmq","3-management")
-//     .WithHttpEndpoint(containerPort: 15672, hostPort: 8080, name: "management")
-//     .WithEndpoint(containerPort: 5672, hostPort: 5672, name: "eventbus", scheme: "tcp")
-//     .WithEnvironment("RABBITMQ_DEFAULT_USER", "guest")
-//     .WithEnvironment("RABBITMQ_DEFAULT_PASS", "guest")
-//     .WithVolumeMount("./rabbitmq", "/var/lib/rabbitmq/mnesia/")
-//     .ConfigureConnectionStringManifestPublisher();
-
 var rabbitMq = builder.AddRabbitMQContainer("eventbus")
     .WithVolumeMount("./rabbitmq", "/var/lib/rabbitmq/mnesia/");
-    // .WithAnnotation(new EndpointAnnotation(ProtocolType.Tcp, containerPort: 5672))
-    // .WithAnnotation(new EndpointAnnotation(ProtocolType.Tcp, port: 8080, containerPort: 15672)) 
-    // .WithAnnotation(new ContainerImageAnnotation
-    // {
-    //     Image = "rabbitmq",
-    //     Tag = "3-management"
-    // })        
-    // // .WithAnnotation(new EndpointAnnotation(
-    // //     ProtocolType.Tcp, 
-    // //     uriScheme: "http", 
-    // //     name: "management", 
-    // //     port: 8080, 
-    // //     containerPort: 15672))
-    // // .WithEndpoint(containerPort: 5672, hostPort: 5672, name: "con", scheme: "tcp")
-    // .WithEndpoint(containerPort: 15672, hostPort: 8080, name: "management", scheme: "http")
-    // .WithHttpEndpoint(containerPort: 15672, hostPort: 8080, name: "management")
-    // .WithEnvironment("RABBITMQ_DEFAULT_USER", "guest")
-    // .WithEnvironment("RABBITMQ_DEFAULT_PASS", "guest")
-    // .WithEnvironment("RABBITMQ_DEFAULT_VHOST", "/")    
-    
-    // .PublishAsContainer();
-
-// Console.WriteLine(((RabbitMQServerResource)rabbitMq).GetConnectionString());
 
 
 var postgres = builder.AddPostgresContainer("postgres",5432,"pass123")
